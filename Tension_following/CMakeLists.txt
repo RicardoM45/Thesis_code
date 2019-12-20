@@ -164,13 +164,8 @@ target_link_libraries(crazyflie_controller
 # endif()
 
 ## Add folders to be run by python nosetests
+##----Change here if you change the file's name----
 # catkin_add_nosetests(test)
-add_executable(extra_tension src/extra_tension.cpp)
-target_link_libraries(extra_tension ${catkin_LIBRARIES})
-add_executable(tension_estimation src/tension_estimation.cpp)
-target_link_libraries(tension_estimation ${catkin_LIBRARIES})
-add_executable(teste_control src/teste_control.cpp)
-target_link_libraries(teste_control ${catkin_LIBRARIES})
 add_executable(Tens_following src/Tens_following.cpp)
 target_link_libraries(Tens_following ${catkin_LIBRARIES})
 
