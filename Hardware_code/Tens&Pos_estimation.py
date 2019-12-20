@@ -75,7 +75,6 @@ class wp():
 		self.rollImu_vec=list()
 		self.pitchImu_vec=list()
 
-		#Confirmacao
 		self.PosX2=list()
 		self.PosY2=list()
 		self.PosZ2=list()
@@ -93,7 +92,7 @@ class wp():
 	def getAttitude(self, msg):
 		global i_time, flag, f_time 
 
-		quaternion=(msg.pose.orientation.x, msg.pose.orientation.y,	msg.pose.orientation.z,	msg.pose.orientation.w)
+		quaternion=(msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w)
 		euler=tf.transformations.euler_from_quaternion(quaternion)
 		
 		#Change the offset if needed, used offsets were 0.02 and -0.03. Angles in radians
@@ -131,7 +130,7 @@ class wp():
 		#If needed multiply by some offset
 		self.thrust=(t1+t2+t3+t4)*1.1
 		
-	#------Observation part for Kalman--------
+	#------Observation part for Kalman filter--------
 	def getTension(self, msg):
 		global mass, grav, z_inicial, r_inicial, DaccZ, DaccX, DaccY
 
