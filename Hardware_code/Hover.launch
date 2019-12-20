@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Optitrack hosting machine values -->
+  <arg name="ip" default="10.2.0.11" />
+  <arg name="port" default="3883" />
+  <!-- Antenna --> 
+  <arg name="uri" default="radio://0/100/2M/E7E7E7E7E7" />
+  <!-- Joystick -->
+  <arg name="joy_dev" default="/dev/input/js0" />
+  <arg name="frame" default="cf1" />
+  <!-- Default set-point -->
+  <arg name="x" default="0" />
+  <arg name="y" default="0" />
+  <arg name="z" default="1" />
+
+  <!-- Crazyflie server (add/remove vehicles and interface with autopilot firmware) -->
+  <include file="$(find crazyflie_driver)/launch/crazyflie_server.launch">
+  </include>
+
+  <!-- Here goes the configuration of the crazyflie to be launched -->
+  <group ns="crazyflie">
+    <!-- Crazyflie add (instantiate a vehicle) -->
+    <!--<include file="$(find crazyflie_driver)/launch/crazyflie_add.launch">-->
+    <node pkg="crazyflie_driver" type="crazyflie_add" name="crazyflie_add" output="screen">
+      <param name="uri" value="$(arg uri)" />
+      <param name="tf_prefix" value="crazyflie" />
+      <param name="enable_logging" value="true" />
+      <param name="roll_trim" value="0.0"/>
+      <param name="pitch_trim" value="0.0"/>
+      <rosparam>
+        genericLogTopics: ["log1", "log2"]
+        genericLogTopicFrequencies: [10, 10]
+        genericLogTopic_log1_Variables: ["stabilizer.roll", "stabilizer.pitch", "stabilizer.yaw"]
+        genericLogTopic_log2_Variables: ["pwm.m1_pwm", "pwm.m2_pwm", "pwm.m3_pwm", "pwm.m4_pwm"]
+      </rosparam>
+    <!--</include>-->
+    </node>
+
+    <!-- Joystick driver node -->
+    <node name="joy" pkg="joy" type="joy_node" output="screen">
+      <param name="dev" value="$(arg joy_dev)" />
+    </node>
+
+    <!-- Crazyflie controller manager (checks if orders comes by services or joystick) -->
+    <node name="joystick_controller" pkg="crazyflie_demo" type="controller.py" output="screen">
+      <param name="use_crazyflie_controller" value="True" /> <!-- Set this to false to disable joystick -->
+    </node>
+
+    <!-- Pose controller -->
+    <include file="$(find crazyflie_controller)/launch/crazyflie2.launch">
+      <arg name="frame" value="$(arg frame)" />
+    </include>
+
+    <!-- Pose publisher -->    
+    <node name="pose" pkg="crazyflie_demo" type="publish_pose.py" output="screen">
+      <param name="name" value="goal" />
+      <param name="rate" value="50" />
+      <param name="x" value="$(arg x)" />
+      <param name="y" value="$(arg y)" />
+      <param name="z" value="$(arg z)" />
+    </node>
+
+    <!-- Maps the frame publishes by the optitrack to the control frame -->
+    <node pkg="tf" type="static_transform_publisher" name="baselink_broadcaster" args="0 0 0 0 0 0 1 $(arg frame) /crazyflie/base_link 100" />
+
+    <!-- Run vrpn client -->
+    <node pkg="vrpn_client_ros" type="vrpn_client_node" name="vrpn_client_node" output="screen">
+      <rosparam subst_value="true">
+      server: $(arg ip)
+      port: $(arg port)
+      update_frequency: 100.0
+      frame_id: world
+      use_server_time: false
+      broadcast_tf: true
+      refresh_tracker_frequency: 1.0
+    </rosparam>
+  </node>
+   
+  </group>
+
+</launch>
