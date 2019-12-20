@@ -4,10 +4,10 @@ The UAV control was done using the "https://github.com/whoenig/crazyflie_ros" re
 
 # Hardware_code
 Includes the "tension following" feature and also the python file used to estimate the tension and the position of the quadcopter. Also includes a subfolder with some bagfiles that can be used by the python file. In the github repository mentioned above, replace the "CMakeList.txt" in crazyflie_controller folder by the one given in this folder. Must also add the "GenericLogData.msg" file in the "msg" folder. 
-Use the launch file named "Hover.launch", which is an adaptation from the "Hover_vrpn.laucnh" presented in the mentioned above repository.
+Use the launch file named "Hover.launch", which is an adaptation from the "Hover_vrpn.laucnh" presented in the repository mentioned above.
 
 # Simulations
-Includes the Simulink simulations for a tethered quadcopter (using a fixed and a variable tether's lenght) and a stucture to control the "x" and "y" coordinates based on the horinzontal tension imposed by the tether.
+Includes the Simulink simulations for a tethered quadcopter (using a fixed and a variable tether's lenght) and a control structure to control the "x" and "y" coordinates based on the horinzontal tension imposed by the tether.
 
 # Others
 Presents two methods to compute the curve parameters given 2 points (the tether's origin and the quadcopter's position). Based on that, it draws the 2D curve that matches the two given points.
